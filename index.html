@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Sparkl-Alpha 📶 MIS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Define generic color variables first */
+    :root {
+      /* Light Theme Defaults */
+      --primary-color: #4CAF50;
+      --primary-dark-color: #388E3C;
+      --accent-color: #FFC107;
+
+      --text-color-primary: #2C3E50;
+      --text-color-secondary: #55606B;
+      --text-color-light: #7F8C8D;
+
+      --bg-color-body: #F7F9FC;
+      --bg-color-sidebar: #FFFFFF;
+      --bg-color-topbar: #FFFFFF;
+      --bg-color-card: #FFFFFF;
+      --bg-color-input: #F7F9FC;
+      --bg-color-button-secondary: #E0E7EB;
+      --bg-color-hover: #E8F5E9;
+      --bg-color-delete-light: #FFEBEE;
+
+      --border-color-main: #DDE2E6;
+      --border-color-delete: #FFCDD2;
+
+      --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.12);
+
+      /* Sizing Variables (unchanged from last iteration) */
+      --spacing-unit: 0.8rem;
+      --font-size-base: 0.9rem;
+      --font-size-lg: 1.2rem;
+      --font-size-xl: 1.5rem;
+      --icon-size-base: 18px;
+      --icon-size-lg: 24px;
+    }
+
+    /* Dark Theme Overrides */
+    html[data-theme='dark'] {
+      --primary-color: #66BB6A; /* Lighter green for dark mode contrast */
+      --primary-dark-color: #4CAF50;
+      --accent-color: #FFD54F;
+
+      --text-color-primary: #ECF0F1; /* Light text for dark background */
+      --text-color-secondary: #BDC3C7;
+      --text-color-light: #95A5A6;
+
+      --bg-color-body: #2C3E50; /* Dark blue-grey */
+      --bg-color-sidebar: #34495E;
+      --bg-color-topbar: #34495E;
+      --bg-color-card: #3D566E;
+      --bg-color-input: #4A637C;
+      --bg-color-button-secondary: #4A637C;
+      --bg-color-hover: #4CAF5020; /* Subtle green hover */
+      --bg-color-delete-light: #D32F2F30; /* Darker red for delete */
+
+      --border-color-main: #5C6E7E;
+      --border-color-delete: #EF9A9A;
+
+      --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.2);
+      --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-color-primary); /* Use generic text color */
+      line-height: 1.5;
+      font-size: var(--font-size-base);
+      background-color: var(--bg-color-body); /* Use generic body background */
+      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* --- Login Page --- */
+    .login-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite alternate;
+      color: white;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 2);
+      border-radius: 10px;
+      box-shadow: var(--shadow-medium);
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    html[data-theme='dark'] .login-box {
+      background: rgba(52, 73, 94, 0.95);
+    }
+
+
+    .login-box h2 {
+      font-size: var(--font-size-xl);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      color: var(--primary-color);
+      font-weight: 700;
+      padding-bottom:10px
+    }
+
+    .login-box input {
+      display: block;
+      width: 100%;
+      margin: var(--spacing-unit) 0;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      font-size: var(--font-size-base);
+      transition: all 0.3s ease;
+      background-color: var(--bg-color-input);
+      color: var(--text-color-primary);
+    }
+
+    .login-box input::placeholder {
+      color: var(--text-color-light);
+      opacity: 0.8;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+      padding-bottom:10px
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 0.9rem 1.4rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      margin-top: calc(var(--spacing-unit) * 1.2);
+    }
+
+    .login-box button:hover {
+      background: var(--primary-dark-color);
+      transform: translateY(-1px);
+    }
+
+    #login-msg {
+      color: #D32F2F;
+      margin-top: var(--spacing-unit);
+      font-size: calc(var(--font-size-base) * 0.9);
+      font-weight: 500;
+    }
+
+    /* --- App Container --- */
+    .app-container {
+      display: flex;
+      height: 100vh;
+      background-color: var(--bg-color-body);
+      overflow: hidden;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      width: 220px;
+      background: var(--bg-color-sidebar);
+      border-right: 1px solid var(--border-color-main);
+      padding: calc(var(--spacing-unit) * 1.2);
+      overflow-y: auto;
+      box-shadow: 1px 0 6px rgba(0, 0, 0, 0.05);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      left: 0;
+      transition: left 0.3s ease-in-out;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar h2 {
+      font-size: var(--font-size-xl);
+      margin-bottom: calc(var(--spacing-unit) * 2);
+      color: var(--primary-color);
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .sidebar .section-label {
+      margin-top: calc(var(--spacing-unit) * 1.2);
+      font-size: var(--font-size-base);
+      color: var(--text-color-secondary);
+      margin-bottom: calc(var(--spacing-unit) * 0.5);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0.4rem 0.6rem;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
+    }
+    
+    .sidebar .section-label:hover {
+      background-color: var(--bg-color-hover);
+    }
+
+    .sidebar .section-label span {
+      margin-left: auto;
+      font-size: calc(var(--font-size-base) * 0.8);
+      color: var(--text-color-light);
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar .section-label.expanded span {
+      transform: rotate(90deg);
+    }
+
+    .sidebar .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 0.7rem 0.8rem;
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      color: var(--text-color-secondary);
+      border-radius: 6px;
+      margin-bottom: 0.2rem;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .sidebar .menu-item:hover {
+      background-color: var(--bg-color-hover);
+      color: var(--primary-dark-color);
+    }
+
+    .sidebar .menu-item i {
+      font-size: var(--icon-size-base) !important;
+      margin-right: 0.8rem;
+      color: var(--text-color-light);
+      transition: color 0.2s ease;
+    }
+
+    .sidebar .menu-item:hover i {
+      color: var(--primary-color);
+    }
+
+    /* Mode Selector Styles */
+    .mode-selector {
+      margin-top: auto;
+      padding-top: var(--spacing-unit);
+      border-top: 1px solid var(--border-color-main);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mode-selector label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: calc(var(--font-size-base) * 0.9);
+      color: var(--text-color-secondary);
+      cursor: pointer;
+      padding: 0.3rem 0;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .mode-selector label:hover {
+        background-color: var(--bg-color-hover);
+    }
+
+    .mode-selector input[type="radio"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .mode-selector input[type="radio"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .mode-selector input[type="radio"]:checked::after {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* --- Main Content Area --- */
+    .main {
+      flex-grow: 1;
+      padding: 0;
+      background: var(--bg-color-body);
+      overflow-y: auto;
+      position: relative;
+      width: 100%;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+      background-color: var(--bg-color-topbar);
+      padding: var(--spacing-unit);
+      border-radius: 0;
+      box-shadow: var(--shadow-light);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: var(--font-size-lg);
+      cursor: pointer;
+      color: var(--text-color-primary);
+      margin-right: var(--spacing-unit);
+    }
+
+    .user-box {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-unit);
+      margin-left: auto; /* Push to the right */
+    }
+    
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-right: var(--spacing-unit); /* Add some spacing */
+    }
+
+    .custom-select {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      background-color: var(--bg-color-input);
+      color: var(--text-color-primary);
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .custom-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .user-name {
+      font-size: var(--font-size-base);
+      color: var(--text-color-primary);
+      font-weight: 500;
+    }
+
+    .profile {
+      background: var(--primary-color);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: calc(var(--font-size-base) * 0.9);
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-color-button-secondary);
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-color-secondary);
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      font-size: calc(var(--font-size-base) * 0.9);
+    }
+
+    .logout-btn:hover {
+      background: #D32F2F;
+      color: white;
+      border-color: #D32F2F;
+    }
+
+    /* --- Cards --- */
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-unit);
+      justify-content: flex-start;
+      padding: var(--spacing-unit) calc(var(--spacing-unit) * 2);
+      background-color: var(--bg-color-body);
+    }
+
+    .card {
+      width: 220px;
+      padding: var(--spacing-unit);
+      border-radius: 12px;
+      background: var(--bg-color-card);
+      box-shadow: var(--shadow-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .card-icon {
+      background: var(--primary-color);
+      color: white;
+      border-radius: 10px;
+      padding: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--icon-size-lg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-icon i {
+      font-size: var(--icon-size-lg) !important;
+    }
+
+    .card-content {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--text-color-primary);
+    }
+
+    /* --- Iframe and Back Button --- */
+    iframe {
+      width: 100%;
+      height: calc(100vh - 60px);
+      border: none;
+      border-radius: 0;
+      background-color: var(--bg-color-card);
+      box-shadow: none;
+      transition: background-color 0.3s ease;
+    }
+
+    #back-btn {
+      display: none !important;
+    }
+
+    /* --- Admin Panel --- */
+    #admin-panel {
+      background: var(--bg-color-card);
+      padding: calc(var(--spacing-unit) * 1.5);
+      border-radius: 12px;
+      box-shadow: var(--shadow-light);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      margin-top: calc(var(--spacing-unit) * 1.5);
+      margin-left: calc(var(--spacing-unit) * 2);
+      margin-right: calc(var(--spacing-unit) * 2);
+      transition: background-color 0.3s ease;
+    }
+
+    #admin-panel h3 {
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--spacing-unit);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    #admin-panel input {
+      padding: 0.6rem 0.8rem;
+      margin: 0.4rem 0.6rem 0.4rem 0;
+      border: 1px solid var(--border-color-main);
+      border-radius: 6px;
+      width: 180px;
+      font-size: calc(var(--font-size-base) * 0.95);
+      transition: border-color 0.3s ease;
+      background-color: var(--bg-color-input);
+      color: var(--text-color-primary);
+    }
+
+    #admin-panel input::placeholder {
+      color: var(--text-color-light);
+      opacity: 0.8;
+    }
+
+    #admin-panel input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    #admin-panel button {
+      padding: 0.6rem 1.2rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: var(--font-size-base);
+    }
+
+    #admin-panel button:hover {
+      background: var(--primary-dark-color);
+      transform: translateY(-1px);
+    }
+
+    #admin-menu-list {
+      margin-top: var(--spacing-unit);
+      list-style: none;
+      padding: 0;
+    }
+
+    #admin-menu-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--border-color-main);
+      color: var(--text-color-secondary);
+      font-size: calc(var(--font-size-base) * 0.95);
+    }
+
+    #admin-menu-list li:last-child {
+      border-bottom: none;
+    }
+
+    .delete-btn {
+      background: var(--bg-color-delete-light);
+      color: #D32F2F;
+      border: 1px solid var(--border-color-delete);
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+      font-weight: 500;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      font-size: calc(var(--font-size-base) * 0.9);
+    }
+
+    .delete-btn:hover {
+      background: #D32F2F;
+      color: white;
+      border-color: #D32F2F;
+    }
+
+    /* Role selection for multi-role users */
+    #role-title div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: calc(var(--font-size-base) * 0.9);
+      color: var(--text-color-secondary);
+    }
+
+    #role-title input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--primary-color);
+      border-radius: 50%;
+      margin-right: 4px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #role-title input[type="radio"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    #role-title input[type="radio"]:checked::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      background-color: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #role-title label {
+      cursor: pointer;
+    }
+
+    /* --- Dashboard Specific Styles --- */
+    #dashboard-content {
+      padding: calc(var(--spacing-unit) * 2);
+      background-color: var(--bg-color-body);
+      min-height: calc(100vh - 60px);
+    }
+
+    #dashboard-content h3 {
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--spacing-unit);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    #dashboard-content .dashboard-card {
+      background-color: var(--bg-color-card);
+      padding: calc(var(--spacing-unit) * 1.5);
+      border-radius: 12px;
+      box-shadow: var(--shadow-light);
+      margin-bottom: calc(var(--spacing-unit) * 1.5);
+      transition: background-color 0.3s ease;
+    }
+
+    #dashboard-content .dashboard-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-unit);
+      margin-bottom: calc(var(--spacing-unit) * 2);
+    }
+
+    #dashboard-content .stat-item {
+      flex: 1;
+      min-width: 150px;
+      background-color: var(--bg-color-card);
+      padding: var(--spacing-unit);
+      border-radius: 8px;
+      box-shadow: var(--shadow-light);
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    #dashboard-content .stat-item .value {
+      font-size: calc(var(--font-size-xl) * 1.2);
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    #dashboard-content .stat-item .label {
+      font-size: calc(var(--font-size-base) * 0.9);
+      color: var(--text-color-secondary);
+    }
+
+    #dashboard-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--spacing-unit);
+    }
+
+    #dashboard-content th, #dashboard-content td {
+      border: 1px solid var(--border-color-main);
+      padding: 0.8rem;
+      text-align: left;
+      font-size: calc(var(--font-size-base) * 0.95);
+      color: var(--text-color-secondary);
+    }
+
+    #dashboard-content th {
+      background-color: var(--bg-color-button-secondary);
+      font-weight: 600;
+      color: var(--text-color-primary);
+      transition: background-color 0.3s ease;
+    }
+
+    #dashboard-content tr:nth-child(even) {
+      background-color: var(--bg-color-body);
+    }
+    #dashboard-content tr:hover {
+      background-color: var(--bg-color-hover);
+    }
+    
+    html[data-theme='dark'] #dashboard-content tr:nth-child(even) {
+      background-color: var(--bg-color-body);
+    }
+
+    /* --- Mobile Responsiveness --- */
+    @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 250px;
+        position: fixed; 
+        height: 100%;
+        z-index: 1000;
+        left: -250px;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      .sidebar.active {
+        left: 0;
+      }
+
+      .main {
+        width: 100%;
+        padding-bottom: 0;
+      }
+
+      .topbar {
+        padding: var(--spacing-unit);
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .cards {
+        justify-content: center;
+        padding: var(--spacing-unit);
+      }
+
+      .card {
+        width: calc(50% - var(--spacing-unit) / 2);
+        max-width: 180px;
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+
+      .card-content {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+
+      iframe {
+        height: calc(100vh - 60px);
+      }
+
+      #admin-panel, #dashboard-content {
+        margin: var(--spacing-unit);
+        padding: var(--spacing-unit);
+      }
+
+      #admin-panel input {
+        width: 100%;
+        margin-right: 0;
+      }
+
+      #admin-panel button {
+        width: 100%;
+        margin-top: var(--spacing-unit);
+      }
+
+      #admin-menu-list li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .delete-btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+
+      #dashboard-content .dashboard-stats {
+        flex-direction: column;
+      }
+
+      #dashboard-content .stat-item {
+        width: 100%;
+      }
+      .filter-controls {
+        width: 100%; /* Take full width on mobile */
+        margin-top: var(--spacing-unit);
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        width: 95%;
+        max-width: 300px;
+      }
+
+      .login-box {
+        margin: var(--spacing-unit);
+      }
+
+      .sidebar {
+        width: 80%;
+        left: -80%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="login-section" class="login-page">
+  <div class="login-box">
+    <h2>🔐 Sparkl-Alpha MIS</h2>
+    <input id="userid" placeholder="User ID" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="login-msg"></p>
+  </div>
+</div>
+
+
+<div id="app" class="hidden app-container">
+  <div class="sidebar" id="sidebar">
+    <h2>⭐ Sparkl-Alpha MIS</h2>
+    <div id="sidebar-sections"></div>
+
+    <div class="mode-selector">
+      <label>Mode:</label>
+      <label>
+        <input type="radio" name="theme-mode" value="system" checked>
+        System Default
+      </label>
+      <label>
+        <input type="radio" name="theme-mode" value="light">
+        Light
+      </label>
+      <label>
+        <input type="radio" name="theme-mode" value="dark">
+        Dark
+      </label>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <!-- New Backer Filter Dropdown -->
+      <div class="filter-controls">
+        <label for="backer-filter" style="color: var(--text-color-secondary);">Dashboard:</label>
+        <select id="backer-filter" class="custom-select">
+          <option value="all">All Dashboard</option>
+          <!-- Backer options will be populated here by JavaScript -->
+        </select>
+      </div>
+      <div id="role-title" class="user-name"></div>
+      <div class="user-box">
+        <div class="profile"><span id="profile-initial">U</span></div>
+        <div class="header-controls">
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+<!--
+    <div id="back-btn" class="hidden">
+      <button onclick="goBack()">🔙 Back</button>
+      <button onclick="openFullScreen()">🗖 Full Screen</button>
+    </div>
+-->
+    <div id="admin-panel" class="hidden">
+      <h3>Add Menu</h3>
+      <input id="role" placeholder="Role (Public/Admin)" />
+      <input id="menu" placeholder="Menu Group" />
+      <input id="submenu" placeholder="Menu Item" />
+      <input id="link" placeholder="URL" />
+      <input id="icon" placeholder="Material Icon" />
+      <input id="backer" placeholder="Backer Name" /> <!-- Added backer input field -->
+      <button onclick="addEntry()">Add</button>
+      <h3 style="margin-top:var(--spacing-unit);">All Menu Items</h3>
+      <ul id="admin-menu-list"></ul>
+    </div>
+
+    <div id="main-content" class="cards">
+      <!-- Cards will be populated here by JavaScript -->
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+      <!-- Dashboard content will be populated here by JavaScript -->
+    </div>
+
+    <iframe id="iframe-view" class="hidden"></iframe>
+  </div>
+</div>
+
+<script>
+// Global variables to manage application state
+let user = {}; // Stores user ID and roles after login
+let allMenuItems = []; // Stores all menu data fetched from Google Apps Script
+let currentActiveRole = ''; // Stores the currently selected role (e.g., 'Admin', 'Public')
+let currentSelectedBacker = 'all'; // Stores the value from the 'Backer' filter dropdown, defaults to 'all'
+let currentSelectedMenuSection = ''; // Stores the 'menu' group that is currently expanded in the sidebar and whose cards are displayed
+let activeView = "cards"; // Controls which main content area is visible: "cards", "dashboard", "iframe", "admin"
+
+// --- Theme Management Functions ---
+const themeRadios = document.querySelectorAll('input[name="theme-mode"]'); // Radio buttons for theme selection
+const htmlElement = document.documentElement; // Reference to the <html> element for data-theme attribute
+
+// Determines the system's preferred theme (dark or light)
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+// Sets the application's theme based on the provided themeName
+function setTheme(themeName) {
+  if (themeName === 'system') {
+    htmlElement.dataset.theme = getSystemTheme(); // Apply system theme
+    localStorage.removeItem('theme'); // Clear any stored theme preference
+    const systemRadio = document.querySelector('input[name="theme-mode"][value="system"]');
+    if (systemRadio) systemRadio.checked = true; // Mark 'System Default' radio as checked
+  } else {
+    htmlElement.dataset.theme = themeName; // Apply selected theme (light/dark)
+    localStorage.setItem('theme', themeName); // Store theme preference in local storage
+    const selectedRadio = document.querySelector(`input[name="theme-mode"][value="${themeName}"]`);
+    if (selectedRadio) selectedRadio.checked = true; // Mark the selected radio as checked
+  }
+}
+
+// Listens for changes in the system's preferred color scheme
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+  // If the user hasn't explicitly chosen a theme, re-apply the system theme
+  if (localStorage.getItem('theme') === null || localStorage.getItem('theme') === 'system') {
+    setTheme('system');
+  }
+});
+
+// Attaches event listeners to theme radio buttons
+themeRadios.forEach(radio => {
+  radio.addEventListener('change', (event) => {
+    setTheme(event.target.value); // Set theme when a radio button is changed
+  });
+});
+
+// --- Initial Load Logic ---
+window.onload = () => {
+  // Check for saved user session
+  const saved = sessionStorage.getItem("user");
+  if (saved) {
+    user = JSON.parse(saved);
+    loadPortal(user.roles); // Load portal if user session exists
+  }
+
+  // Load and apply theme preference
+  const storedTheme = localStorage.getItem('theme');
+  if (storedTheme) {
+    setTheme(storedTheme);
+  } else {
+    setTheme('system'); // Default to system theme if no preference is saved
+  }
+
+  // Attach event listener for the 'Backer' filter dropdown
+  document.getElementById('backer-filter').addEventListener('change', filterCardsByBacker);
+};
+
+// --- Authentication Functions ---
+function login() {
+  const id = document.getElementById("userid").value;
+  const pass = document.getElementById("password").value;
+  document.getElementById("login-msg").innerText = ""; // Clear any previous login messages
+  
+  // Call Google Apps Script to check login credentials
+  google.script.run.withSuccessHandler(res => {
+    if (res.success) {
+      user = { id: res.user, roles: res.roles }; // Store user data
+      sessionStorage.setItem("user", JSON.stringify(user)); // Save user session
+      loadPortal(user.roles); // Load the main application portal
+    } else {
+      document.getElementById("login-msg").innerText = "❌ Invalid credentials"; // Display error message
+    }
+  }).checkLogin(id, pass);
+}
+
+function logout() {
+  sessionStorage.clear(); // Clear user session data
+  
+  // Show login section and hide the main application
+  document.getElementById("login-section").classList.remove("hidden");
+  document.getElementById("app").classList.add("hidden");
+
+  // Clear login input fields and message
+  document.getElementById("userid").value = "";
+  document.getElementById("password").value = "";
+  document.getElementById("login-msg").innerText = ""; 
+
+  // Reset theme radio button to system default on logout for a clean slate
+  const systemRadio = document.querySelector('input[name="theme-mode"][value="system"]');
+  if (systemRadio) systemRadio.checked = true;
+  setTheme('system'); // Apply system theme
+}
+
+// --- Sidebar and View Management ---
+// Toggles the visibility of the sidebar (primarily for mobile responsiveness)
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("active");
+  // You might want to add an overlay here to close the sidebar by tapping outside
+}
+
+// Hides all major content views
+function hideAllViews() {
+  document.getElementById("main-content").classList.add("hidden");
+  document.getElementById("iframe-view").classList.add("hidden");
+  document.getElementById("admin-panel").classList.add("hidden");
+  document.getElementById("dashboard-content").classList.add("hidden");
+}
+
+// Central function to update and render the application's content (sidebar and cards)
+function updateAppContent() {
+    hideAllViews(); // Hide all current views before re-rendering
+
+    const sidebar = document.getElementById("sidebar-sections");
+    const content = document.getElementById("main-content");
+    sidebar.innerHTML = ''; // Clear existing sidebar content
+    content.innerHTML = ''; // Clear existing cards content
+
+    // Determine effective roles for filtering menu items
+    const effectiveRoles = user.roles.map(r => r.toLowerCase());
+    const isAllAccess = user.id.toLowerCase() === "all";
+
+    // Filter allMenuItems based on active role and selected backer
+    const filteredItems = allMenuItems.filter(item => {
+        const itemRoleList = item.role.split(",").map(r => r.trim().toLowerCase());
+        const roleMatch = isAllAccess ? itemRoleList.includes("all") : itemRoleList.some(r => effectiveRoles.includes(r));
+        
+        // Ensure backer matches the selected filter, or if 'all' is selected
+        const backerMatch = currentSelectedBacker === "all" || (item.backer && item.backer.toLowerCase() === currentSelectedBacker.toLowerCase());
+        
+        return roleMatch && backerMatch;
+    });
+
+    // Group filtered items by 'menu' for sidebar rendering
+    const groupedForSidebar = {};
+    if (isAllAccess || effectiveRoles.includes('admin') || effectiveRoles.includes('public')) {
+        // Add a static Dashboard entry to 'Main' group if user has relevant roles
+        if (!groupedForSidebar['Main']) groupedForSidebar['Main'] = [];
+        // Check if Dashboard is already present to avoid duplication if it's somehow in allMenuItems
+        const dashboardExists = groupedForSidebar['Main'].some(item => item.link === 'internal:dashboard');
+        if (!dashboardExists) {
+            groupedForSidebar['Main'].unshift({ submenu: 'Dashboard', link: 'internal:dashboard', icon: 'dashboard', menu: 'Main', backer: 'Internal' });
+        }
+    }
+    filteredItems.forEach(item => {
+        if (!groupedForSidebar[item.menu]) groupedForSidebar[item.menu] = [];
+        // Avoid adding 'internal:dashboard' from allMenuItems again if it was manually added
+        if (item.link !== 'internal:dashboard' || !groupedForSidebar[item.menu].some(existing => existing.link === 'internal:dashboard')) {
+            groupedForSidebar[item.menu].push(item);
+        }
+    });
+
+    // Render Sidebar Sections and Menu Items
+    for (let menuGroup in groupedForSidebar) {
+        const sectionWrapper = document.createElement("div");
+        const label = document.createElement("div");
+        label.className = "section-label";
+        label.innerText = menuGroup;
+        label.style.fontSize = "1.1rem";
+        label.style.fontWeight = "bold";
+        label.style.cursor = "pointer";
+
+        const arrow = document.createElement("span");
+        arrow.innerHTML = "▶"; // Right arrow initially
+        arrow.style.marginLeft = "10px";
+        arrow.style.fontSize = "0.9rem";
+        label.appendChild(arrow);
+
+        const sectionItems = document.createElement("div");
+        sectionItems.style.marginTop = "5px";
+        sectionItems.classList.add('section-items'); // Add class for easy selection later
+
+        // Sort submenus alphabetically for consistent display
+        groupedForSidebar[menuGroup].sort((a, b) => a.submenu.localeCompare(b.submenu));
+
+        groupedForSidebar[menuGroup].forEach(item => {
+            const btn = document.createElement("div");
+            btn.className = "menu-item";
+            btn.style.borderRadius = "6px";
+            btn.style.padding = "5px 10px";
+            btn.innerHTML = `<i class="material-icons">${item.icon}</i> ${item.submenu}`;
+            btn.onclick = () => openItem(item.link, item.menu, item.submenu);
+            sectionItems.appendChild(btn);
+        });
+
+        // Click handler for sidebar section labels
+        label.onclick = () => {
+            const isCurrentlyVisible = sectionItems.style.display === "block";
+            
+            // Close other open sections in the sidebar
+            document.querySelectorAll('.sidebar .section-items').forEach(item => {
+                if (item !== sectionItems) {
+                    item.style.display = 'none';
+                    item.previousElementSibling.querySelector('span').innerHTML = "▶"; // Reset arrow
+                    item.previousElementSibling.classList.remove('expanded');
+                }
+            });
+
+            // Toggle visibility of the clicked section
+            sectionItems.style.display = isCurrentlyVisible ? "none" : "block";
+            arrow.innerHTML = isCurrentlyVisible ? "▶" : "▼"; // Toggle arrow direction
+            label.classList.toggle('expanded', !isCurrentlyVisible); // Add/remove 'expanded' class
+
+            // Update the currently selected menu section for card rendering
+            currentSelectedMenuSection = isCurrentlyVisible ? '' : menuGroup; 
+
+            // Re-render cards to reflect the newly selected menu section and current backer
+            renderCardsForActiveSection();
+        };
+
+        sectionWrapper.appendChild(label);
+        sectionWrapper.appendChild(sectionItems);
+        sidebar.appendChild(sectionWrapper);
+    }
+
+    // Logic for initial sidebar expansion:
+    // If no specific menu section is currently active (e.g., on initial load or after 'Back'),
+    // then expand the first available section if there are any.
+    if (!currentSelectedMenuSection && Object.keys(groupedForSidebar).length > 0) {
+        const firstSectionLabel = sidebar.querySelector('.section-label');
+        if (firstSectionLabel) {
+            // Simulate a click on the first section label to expand it and render its cards.
+            // This also sets currentSelectedMenuSection to the first group.
+            firstSectionLabel.click();
+        }
+    }
+    // If currentSelectedMenuSection *is* set (e.g., after a filter change while a section was expanded),
+    // we need to make sure that section is still expanded after the re-render.
+    else if (currentSelectedMenuSection) {
+        const activeLabel = sidebar.querySelector(`.section-label:has(~ .section-items [data-menu="${currentSelectedMenuSection}"])`);
+        if (activeLabel) {
+            const activeItems = activeLabel.nextElementSibling;
+            activeItems.style.display = 'block';
+            activeLabel.querySelector('span').innerHTML = '▼';
+            activeLabel.classList.add('expanded');
+        }
+    }
+
+    // Render Cards for the actively selected menu section
+    renderCardsForActiveSection();
+
+    // Handle admin panel visibility based on the active role
+    if (currentActiveRole === "Admin") {
+        document.getElementById("admin-panel").classList.remove("hidden");
+        loadAdminMenu(); // Load admin menu content if in admin mode
+    } else {
+        document.getElementById("admin-panel").classList.add("hidden");
+    }
+
+    // Determine and display the correct main content view
+    if (activeView === "dashboard") {
+        document.getElementById("dashboard-content").classList.remove("hidden");
+        renderDashboard();
+    } else if (activeView === "iframe") {
+        document.getElementById("iframe-view").classList.remove("hidden");
+        // Ensure iframe src is set, or navigate to currentLink
+        document.getElementById("iframe-view").src = currentLink;
+    } else { // Default to "cards" view
+        document.getElementById("main-content").classList.remove("hidden");
+    }
+}
+
+// Renders the cards visible in the main content area based on current filters
+function renderCardsForActiveSection() {
+    const content = document.getElementById("main-content");
+    content.innerHTML = ''; // Clear existing cards
+
+    const cardsToShow = allMenuItems.filter(item => {
+        // Filter by user role, selected backer, and selected menu section
+        const itemRoleList = item.role.split(",").map(r => r.trim().toLowerCase());
+        const roleMatch = user.id.toLowerCase() === "all" ? itemRoleList.includes("all") : itemRoleList.some(r => user.roles.map(ur => ur.toLowerCase()).includes(r));
+        const backerMatch = currentSelectedBacker === "all" || (item.backer && item.backer.toLowerCase() === currentSelectedBacker.toLowerCase());
+        const menuSectionMatch = currentSelectedMenuSection === '' || item.menu === currentSelectedMenuSection;
+
+        // Do not create cards for the internal dashboard link
+        return roleMatch && backerMatch && menuSectionMatch && item.link !== 'internal:dashboard'; 
+    });
+
+    // Create and append card elements
+    cardsToShow.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.menu = item.menu; // Store menu group on card
+        card.dataset.backer = item.backer; // Store backer data on card
+        card.onclick = () => openItem(item.link, item.menu, item.submenu);
+        card.innerHTML = `
+        <div class="card-icon">
+            <i class="material-icons">${item.icon}</i>
+        </div>
+        <div class="card-content">${item.submenu}</div>
+        `;
+        content.appendChild(card);
+    });
+}
+
+// Opens a specific item (dashboard, iframe content)
+function openItem(link, menu, submenu) {
+    hideAllViews(); // Hide all current views
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar.classList.contains("active")) {
+        sidebar.classList.remove("active"); // Close sidebar on mobile
+    }
+    
+    currentSelectedMenuSection = menu; // Keep track of the menu group for the current item
+
+    if (link === 'internal:dashboard') {
+        activeView = "dashboard";
+        document.getElementById("dashboard-content").classList.remove("hidden");
+        renderDashboard(); // Render dashboard content
+    } 
+    // Attempt to embed ALL other links in the iframe.
+    else {
+        activeView = "iframe";
+        // For Google Docs/Sheets/Slides, add rm=minimal if not already present
+        // For PDFs, ensure it's a direct link to a PDF (can generally embed)
+        // For other web pages/scripts, attempt direct embed
+        currentLink = link; // Default to the original link
+
+        if (link.includes("docs.google.com/document") || link.includes("docs.google.com/spreadsheets") || link.includes("docs.google.com/presentation")) {
+            currentLink = !link.includes("rm=minimal") ? link + (link.includes("?") ? "&rm=minimal" : "?rm=minimal") : link;
+        } else if (link.toLowerCase().endsWith(".pdf")) {
+            // PDFs generally embed well, no special parameters needed
+            currentLink = link;
+        } else if (link.includes("script.google.com") || link.includes("lookerstudio.google.com") || !link.startsWith(window.location.origin)) {
+            // Warn for non-embeddable sites (Apps Script, Looker Studio, or cross-origin sites)
+            console.warn(`Attempting to embed "${link}" in iframe. Note: This URL might refuse to connect due to security policies (X-Frame-Options or CSP). It may appear blank or show an error.`);
+        }
+
+        document.getElementById("iframe-view").src = currentLink;
+        document.getElementById("iframe-view").classList.remove("hidden");
+    }
+}
+
+// Handles the 'Back' button functionality
+function goBack() {
+    activeView = "cards"; // Set view back to cards
+    currentSelectedBacker = "all"; // Reset backer filter
+    currentSelectedMenuSection = ''; // Reset selected menu section (show all categories)
+    
+    // Deselect backer filter dropdown
+    const backerFilter = document.getElementById('backer-filter');
+    backerFilter.value = "all";
+
+    // Ensure the first role is selected if multiple roles exist, or default to the single role
+    const roleRadios = document.querySelectorAll('input[name="role-select"]');
+    if (roleRadios.length > 0) {
+        currentActiveRole = roleRadios[0].value;
+        roleRadios[0].checked = true;
+    } else if (user.roles && user.roles.length > 0) {
+        currentActiveRole = user.roles[0];
+    }
+    
+    updateAppContent(); // Re-render everything with reset filters
+}
+
+// Opens the current iframe content in a new full-screen window/tab
+function openFullScreen() {
+  if (currentLink) {
+    // This will always open in a new tab/window, as it bypasses iframe embedding.
+    window.open(currentLink, '_blank');
+  } else {
+    console.log("No content available to open in full screen.");
+  }
+}
+
+// Updates the `currentSelectedBacker` and triggers a full content update
+function filterCardsByBacker() {
+    currentSelectedBacker = document.getElementById('backer-filter').value;
+    updateAppContent(); // Re-render sidebar and cards with new backer filter
+}
+
+// Populates the 'Backer' filter dropdown with unique backer names from the menu data
+function populateBackerFilter(menuData) {
+    const backerFilter = document.getElementById('backer-filter');
+    backerFilter.innerHTML = '<option value="all">All Backers</option>'; // Always start with 'All Backers' option
+
+    const uniqueBackers = new Set();
+    menuData.forEach(item => {
+        if (item.backer && item.backer !== "") {
+            uniqueBackers.add(item.backer);
+        }
+    });
+
+    // Add unique backers as options, sorted alphabetically
+    Array.from(uniqueBackers).sort().forEach(backer => {
+        const option = document.createElement('option');
+        option.value = backer;
+        option.innerText = backer;
+        backerFilter.appendChild(option);
+    });
+}
+
+// Initiates the loading of the main application portal
+function loadPortal(roles) {
+  document.getElementById("login-section").classList.add("hidden"); // Hide login
+  document.getElementById("app").classList.remove("hidden"); // Show app
+  document.getElementById("role-title").innerText = `Welcome to Sparkl-MIS, ${user.id}`;
+  document.getElementById("profile-initial").innerText = user.id.charAt(0).toUpperCase();
+
+  // Initialize currentActiveRole based on user roles
+  currentActiveRole = user.roles.includes("Admin") ? "Admin" : user.roles[0];
+
+  // If user has multiple roles, create radio buttons for role selection
+  if (user.roles.length > 1) {
+    const roleWrapper = document.createElement("div");
+    roleWrapper.style.marginTop = "8px";
+    user.roles.forEach(role => {
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "role-select";
+      radio.value = role;
+      radio.id = `role_${role}`;
+      radio.onclick = () => {
+        currentActiveRole = role; // Update active role
+        updateAppContent(); // Re-render content based on the new role
+      };
+      if (role === currentActiveRole) radio.checked = true;
+
+      const label = document.createElement("label");
+      label.htmlFor = `role_${role}`;
+      label.innerText = role;
+      label.style.marginRight = "10px";
+      roleWrapper.appendChild(radio);
+      roleWrapper.appendChild(label);
+    });
+    document.getElementById("role-title").appendChild(roleWrapper);
+  }
+  
+  // Fetch all menu items once from Google Apps Script
+  google.script.run.withSuccessHandler(data => {
+      allMenuItems = data.map(item => ({
+          role: item[0],
+          menu: item[1],
+          submenu: item[2],
+          link: item[3],
+          icon: item[4],
+          backer: item[5]
+      }));
+      populateBackerFilter(allMenuItems); // Populate backer filter
+      updateAppContent(); // Initial render after all data is loaded
+  }).getMenuData(); // Calls your Apps Script function
+}
+
+// --- Dashboard Functions (Placeholders) ---
+function renderDashboard() {
+  const dashboardContent = document.getElementById('dashboard-content');
+  dashboardContent.innerHTML = `
+    <div class="dashboard-card">
+      <h3>Overall Metrics</h3>
+      <div class="dashboard-stats">
+        <div class="stat-item">
+          <div class="value">12,345</div>
+          <div class="label">Total Users</div>
+        </div>
+        <div class="stat-item">
+          <div class="value">$56,789</div>
+          <div class="label">Revenue (MTD)</div>
+        </div>
+        <div class="stat-item">
+          <div class="value">87%</div>
+          <div class="label">Satisfaction</div>
+        </div>
+        <div class="stat-item">
+          <div class="value">2.5M</div>
+          <div class="label">Page Views</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>Recent Activity</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Activity</th>
+            <th>User</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>2025-06-09</td><td>Report Generated</td><td>User A</td><td>Completed</td></tr>
+          <tr><td>2025-06-09</td><td>Data Update</td><td>Admin B</td><td>Success</td></tr>
+          <tr><td>2025-06-08</td><td>New User Added</td><td>Admin C</td><td>Completed</td></tr>
+          <tr><td>2025-06-08</td><td>API Call</td><td>System</td><td>Success</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>Performance Trends (Placeholder)</h3>
+      <p style="text-align: center; color: var(--text-color-secondary);">
+        This section could contain interactive charts (e.g., using D3.js) showing performance trends.
+      </p>
+      <div style="height: 200px; background-color: var(--bg-color-input); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: var(--text-color-light);">
+        [Chart Placeholder]
+      </div>
+    </div>
+  `;
+}
+
+// --- Admin Functions (Placeholders) ---
+// Placeholder for adding a new menu entry
+function addEntry() {
+  console.log("Add Entry functionality (from Code.gs) would be called here.");
+  const role = document.getElementById('role').value;
+  const menu = document.getElementById('menu').value;
+  const submenu = document.getElementById('submenu').value;
+  const link = document.getElementById('link').value;
+  const icon = document.getElementById('icon').value;
+  const backer = document.getElementById('backer').value; // Get backer value
+  
+  // Example of calling your Apps Script function to save data:
+  // google.script.run.addMenuItem(role, menu, submenu, link, icon, backer);
+  // After adding, you would typically refresh the menu data and content:
+  // google.script.run.withSuccessHandler(data => {
+  //     allMenuItems = data.map(item => ({...})); // Re-map data
+  //     populateBackerFilter(allMenuItems);
+  //     updateAppContent();
+  // }).getMenuData();
+}
+
+// Placeholder for loading the admin menu list
+function loadAdminMenu() {
+  console.log("Load Admin Menu functionality (from Code.gs) would be called here.");
+  const adminMenuList = document.getElementById("admin-menu-list");
+  // This would typically fetch current admin menu items from Apps Script
+  adminMenuList.innerHTML = "<li>Example Admin Item <button class='delete-btn'>Delete</button></li>";
+}
+</script>
+</body>
+</html>
