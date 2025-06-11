@@ -95,6 +95,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark-color) 100%);
       background-size: 200% 200%;
       animation: gradientShift 15s ease infinite alternate;
       color: white;
@@ -737,6 +738,109 @@
       background-color: var(--bg-color-body);
     }
 
+    /* --- Notes Section Styles --- */
+    #notes-content {
+        padding: calc(var(--spacing-unit) * 2);
+        background-color: var(--bg-color-body);
+        min-height: calc(100vh - 60px);
+    }
+
+    #notes-content h3 {
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--spacing-unit);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    #notes-content .input-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-unit);
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+    }
+
+    #notes-content .input-field {
+        flex-grow: 1;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border-color-main);
+        border-radius: 6px;
+        background-color: var(--bg-color-input);
+        color: var(--text-color-primary);
+        font-size: var(--font-size-base);
+        outline: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #notes-content .input-field:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    #notes-content .add-note-btn {
+        padding: 0.8rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    #notes-content .add-note-btn:hover {
+        background: var(--primary-dark-color);
+        transform: translateY(-1px);
+    }
+
+    .notes-list {
+        background-color: var(--bg-color-card);
+        padding: calc(var(--spacing-unit) * 1.5);
+        border-radius: 12px;
+        box-shadow: var(--shadow-light);
+        transition: background-color 0.3s ease;
+    }
+
+    .note-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px dashed var(--border-color-main);
+        color: var(--text-color-primary);
+        font-size: var(--font-size-base);
+    }
+
+    .note-item:last-child {
+        border-bottom: none;
+    }
+
+    .note-item span.timestamp {
+        font-size: calc(var(--font-size-base) * 0.85);
+        color: var(--text-color-secondary);
+        margin-left: 1rem;
+        white-space: nowrap; /* Prevent timestamp from wrapping */
+    }
+
+    .note-item .delete-note-btn {
+        background: var(--bg-color-delete-light);
+        color: #D32F2F;
+        border: 1px solid var(--border-color-delete);
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px;
+        font-weight: 500;
+        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        font-size: calc(var(--font-size-base) * 0.8);
+    }
+
+    .note-item .delete-note-btn:hover {
+        background: #D32F2F;
+        color: white;
+        border-color: #D32F2F;
+    }
+
     /* --- Mobile Responsiveness --- */
     @media (max-width: 768px) {
       .app-container {
@@ -788,17 +892,17 @@
         height: calc(100vh - 60px);
       }
 
-      #admin-panel, #dashboard-content {
+      #admin-panel, #dashboard-content, #notes-content {
         margin: var(--spacing-unit);
         padding: var(--spacing-unit);
       }
 
-      #admin-panel input {
+      #admin-panel input, #notes-content .input-field {
         width: 100%;
         margin-right: 0;
       }
 
-      #admin-panel button {
+      #admin-panel button, #notes-content .add-note-btn {
         width: 100%;
         margin-top: var(--spacing-unit);
       }
@@ -843,6 +947,8 @@
       }
     }
   </style>
+  <!-- Google Apps Script API -->
+  <script type="text/javascript" src="https://script.google.com/macros/s/AKfycbynzglW375rLKMyoVhcdUSxMz6HQEQ5GBD2wwC3P1fVwa3iNyN9_QWf7e0vRsEDRYtA/exec?callback=defineScriptProperties"></script>
 </head>
 <body>
 
@@ -925,6 +1031,17 @@
       <!-- Dashboard content will be populated here by JavaScript -->
     </div>
 
+    <div id="notes-content" class="hidden">
+      <h3>My Private Notes</h3>
+      <div class="input-section">
+        <input type="text" id="noteInput" placeholder="Write a new note..." class="input-field" />
+        <button id="addNoteBtn" class="add-note-btn">Add Note</button>
+      </div>
+      <div class="notes-list" id="notesContainer">
+        <p style="text-align: center; color: var(--text-color-light);">Loading notes...</p>
+      </div>
+    </div>
+
     <iframe id="iframe-view" class="hidden"></iframe>
   </div>
 </div>
@@ -936,7 +1053,8 @@ let allMenuItems = []; // Stores all menu data fetched from Google Apps Script
 let currentActiveRole = ''; // Stores the currently selected role (e.g., 'Admin', 'Public')
 let currentSelectedBacker = 'all'; // Stores the value from the 'Backer' filter dropdown, defaults to 'all'
 let currentSelectedMenuSection = ''; // Stores the 'menu' group that is currently expanded in the sidebar and whose cards are displayed
-let activeView = "cards"; // Controls which main content area is visible: "cards", "dashboard", "iframe", "admin"
+let activeView = "cards"; // Controls which main content area is visible: "cards", "dashboard", "iframe", "admin", "notes"
+let currentLink = ''; // Stores the URL of the currently displayed iframe
 
 // --- Theme Management Functions ---
 const themeRadios = document.querySelectorAll('input[name="theme-mode"]'); // Radio buttons for theme selection
@@ -996,24 +1114,39 @@ window.onload = () => {
 
   // Attach event listener for the 'Backer' filter dropdown
   document.getElementById('backer-filter').addEventListener('change', filterCardsByBacker);
+  
+  // Attach event listeners for notes functionality
+  document.getElementById('addNoteBtn').addEventListener('click', addNote);
+  document.getElementById('noteInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      addNote();
+    }
+  });
 };
 
 // --- Authentication Functions ---
 function login() {
   const id = document.getElementById("userid").value;
   const pass = document.getElementById("password").value;
-  document.getElementById("login-msg").innerText = ""; // Clear any previous login messages
+  document.getElementById("login-msg").innerText = "Logging in..."; // Show loading message
   
   // Call Google Apps Script to check login credentials
-  google.script.run.withSuccessHandler(res => {
-    if (res.success) {
-      user = { id: res.user, roles: res.roles }; // Store user data
-      sessionStorage.setItem("user", JSON.stringify(user)); // Save user session
-      loadPortal(user.roles); // Load the main application portal
-    } else {
-      document.getElementById("login-msg").innerText = "❌ Invalid credentials"; // Display error message
-    }
-  }).checkLogin(id, pass);
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        user = { id: res.user, roles: res.roles }; // Store user data
+        sessionStorage.setItem("user", JSON.stringify(user)); // Save user session
+        loadPortal(user.roles); // Load the main application portal
+        document.getElementById("login-msg").innerText = ""; // Clear message on success
+      } else {
+        document.getElementById("login-msg").innerText = "❌ Invalid credentials"; // Display error message
+      }
+    })
+    .withFailureHandler(error => {
+      console.error("Login Apps Script error:", error);
+      document.getElementById("login-msg").innerText = "❌ Login error. Please try again or check console.";
+    })
+    .checkLogin(id, pass);
 }
 
 function logout() {
@@ -1048,6 +1181,7 @@ function hideAllViews() {
   document.getElementById("iframe-view").classList.add("hidden");
   document.getElementById("admin-panel").classList.add("hidden");
   document.getElementById("dashboard-content").classList.add("hidden");
+  document.getElementById("notes-content").classList.add("hidden"); // Hide notes content
 }
 
 // Central function to update and render the application's content (sidebar and cards)
@@ -1076,22 +1210,32 @@ function updateAppContent() {
 
     // Group filtered items by 'menu' for sidebar rendering
     const groupedForSidebar = {};
+    // Add a static Dashboard entry to 'Main' group if user has relevant roles
     if (isAllAccess || effectiveRoles.includes('admin') || effectiveRoles.includes('public')) {
-        // Add a static Dashboard entry to 'Main' group if user has relevant roles
         if (!groupedForSidebar['Main']) groupedForSidebar['Main'] = [];
-        // Check if Dashboard is already present to avoid duplication if it's somehow in allMenuItems
         const dashboardExists = groupedForSidebar['Main'].some(item => item.link === 'internal:dashboard');
         if (!dashboardExists) {
-            groupedForSidebar['Main'].unshift({ submenu: 'Dashboard', link: 'internal:dashboard', icon: 'dashboard', menu: 'Main', backer: 'Internal' });
+            groupedForSidebar['Main'].unshift({ submenu: 'Dashboard', link: 'internal:dashboard', icon: 'dashboard', menu: 'Main', backer: 'Internal', role: 'Admin,Public' });
         }
     }
+    
+    // Add a static "My Notes" entry to 'Main' group for all authenticated users
+    if (user.id) { // Check if user is logged in
+        if (!groupedForSidebar['Main']) groupedForSidebar['Main'] = [];
+        const notesExists = groupedForSidebar['Main'].some(item => item.link === 'internal:notes');
+        if (!notesExists) {
+            groupedForSidebar['Main'].unshift({ submenu: 'My Notes', link: 'internal:notes', icon: 'description', menu: 'Main', backer: 'Internal', role: 'Public' });
+        }
+    }
+
     filteredItems.forEach(item => {
         if (!groupedForSidebar[item.menu]) groupedForSidebar[item.menu] = [];
-        // Avoid adding 'internal:dashboard' from allMenuItems again if it was manually added
-        if (item.link !== 'internal:dashboard' || !groupedForSidebar[item.menu].some(existing => existing.link === 'internal:dashboard')) {
+        // Avoid adding internal links from allMenuItems again if they were manually added
+        if (item.link !== 'internal:dashboard' && item.link !== 'internal:notes') {
             groupedForSidebar[item.menu].push(item);
         }
     });
+
 
     // Render Sidebar Sections and Menu Items
     for (let menuGroup in groupedForSidebar) {
@@ -1194,9 +1338,11 @@ function updateAppContent() {
     if (activeView === "dashboard") {
         document.getElementById("dashboard-content").classList.remove("hidden");
         renderDashboard();
+    } else if (activeView === "notes") {
+        document.getElementById("notes-content").classList.remove("hidden");
+        loadNotes(); // Load notes specific to the user
     } else if (activeView === "iframe") {
         document.getElementById("iframe-view").classList.remove("hidden");
-        // Ensure iframe src is set, or navigate to currentLink
         document.getElementById("iframe-view").src = currentLink;
     } else { // Default to "cards" view
         document.getElementById("main-content").classList.remove("hidden");
@@ -1215,8 +1361,8 @@ function renderCardsForActiveSection() {
         const backerMatch = currentSelectedBacker === "all" || (item.backer && item.backer.toLowerCase() === currentSelectedBacker.toLowerCase());
         const menuSectionMatch = currentSelectedMenuSection === '' || item.menu === currentSelectedMenuSection;
 
-        // Do not create cards for the internal dashboard link
-        return roleMatch && backerMatch && menuSectionMatch && item.link !== 'internal:dashboard'; 
+        // Do not create cards for internal links that have their own dedicated sections
+        return roleMatch && backerMatch && menuSectionMatch && item.link !== 'internal:dashboard' && item.link !== 'internal:notes'; 
     });
 
     // Create and append card elements
@@ -1236,7 +1382,7 @@ function renderCardsForActiveSection() {
     });
 }
 
-// Opens a specific item (dashboard, iframe content)
+// Opens a specific item (dashboard, notes, iframe content)
 function openItem(link, menu, submenu) {
     hideAllViews(); // Hide all current views
     const sidebar = document.getElementById("sidebar");
@@ -1250,7 +1396,11 @@ function openItem(link, menu, submenu) {
         activeView = "dashboard";
         document.getElementById("dashboard-content").classList.remove("hidden");
         renderDashboard(); // Render dashboard content
-    } 
+    } else if (link === 'internal:notes') {
+        activeView = "notes";
+        document.getElementById("notes-content").classList.remove("hidden");
+        loadNotes(); // Load and display user notes
+    }
     // Attempt to embed ALL other links in the iframe.
     else {
         activeView = "iframe";
@@ -1274,7 +1424,7 @@ function openItem(link, menu, submenu) {
     }
 }
 
-// Handles the 'Back' button functionality
+// Handles the 'Back' button functionality (currently not in use, but kept for future expansion)
 function goBack() {
     activeView = "cards"; // Set view back to cards
     currentSelectedBacker = "all"; // Reset backer filter
@@ -1318,9 +1468,20 @@ function populateBackerFilter(menuData) {
     backerFilter.innerHTML = '<option value="all">All Backers</option>'; // Always start with 'All Backers' option
 
     const uniqueBackers = new Set();
-    menuData.forEach(item => {
-        if (item.backer && item.backer !== "") {
-            uniqueBackers.add(item.backer);
+    // Assuming menuData is a 2D array from Apps Script
+    // Headers: Role, Menu Group, Menu Item, URL, Icon, Backer Name
+    const headers = menuData[0];
+    const backerColIndex = headers.indexOf('Backer Name');
+
+    if (backerColIndex === -1) {
+        console.warn("Backer Name column not found in Menu sheet. Filter will not be populated.");
+        return;
+    }
+
+    menuData.slice(1).forEach(row => { // Skip header row
+        const backer = row[backerColIndex];
+        if (backer && backer !== "") {
+            uniqueBackers.add(backer.trim());
         }
     });
 
@@ -1345,8 +1506,15 @@ function loadPortal(roles) {
 
   // If user has multiple roles, create radio buttons for role selection
   if (user.roles.length > 1) {
-    const roleWrapper = document.createElement("div");
-    roleWrapper.style.marginTop = "8px";
+    let roleWrapper = document.getElementById("role-radio-wrapper");
+    if (!roleWrapper) { // Create wrapper only if it doesn't exist
+        roleWrapper = document.createElement("div");
+        roleWrapper.id = "role-radio-wrapper";
+        document.getElementById("role-title").appendChild(roleWrapper);
+    } else {
+        roleWrapper.innerHTML = ''; // Clear existing radios if re-rendering
+    }
+
     user.roles.forEach(role => {
       const radio = document.createElement("input");
       radio.type = "radio";
@@ -1366,25 +1534,34 @@ function loadPortal(roles) {
       roleWrapper.appendChild(radio);
       roleWrapper.appendChild(label);
     });
-    document.getElementById("role-title").appendChild(roleWrapper);
   }
   
   // Fetch all menu items once from Google Apps Script
-  google.script.run.withSuccessHandler(data => {
-      allMenuItems = data.map(item => ({
-          role: item[0],
-          menu: item[1],
-          submenu: item[2],
-          link: item[3],
-          icon: item[4],
-          backer: item[5]
-      }));
-      populateBackerFilter(allMenuItems); // Populate backer filter
-      updateAppContent(); // Initial render after all data is loaded
-  }).getMenuData(); // Calls your Apps Script function
+  google.script.run
+    .withSuccessHandler(data => {
+        // Assume data[0] is headers: Role, Menu Group, Menu Item, URL, Icon, Backer Name
+        const headers = data[0];
+        const dataRows = data.slice(1); // Exclude headers
+
+        allMenuItems = dataRows.map(row => ({
+            role: row[headers.indexOf('Role')],
+            menu: row[headers.indexOf('Menu Group')],
+            submenu: row[headers.indexOf('Menu Item')],
+            link: row[headers.indexOf('URL')],
+            icon: row[headers.indexOf('Icon')],
+            backer: row[headers.indexOf('Backer Name')]
+        }));
+        populateBackerFilter(data); // Pass full data to populate backer filter (which expects headers)
+        updateAppContent(); // Initial render after all data is loaded
+    })
+    .withFailureHandler(error => {
+        console.error("Error fetching menu data:", error);
+        document.getElementById("main-content").innerHTML = `<p style="text-align:center; color:red;">Error loading menu data: ${error.message}</p>`;
+    })
+    .getMenuData(); // Calls your Apps Script function
 }
 
-// --- Dashboard Functions (Placeholders) ---
+// --- Dashboard Functions (Placeholder) ---
 function renderDashboard() {
   const dashboardContent = document.getElementById('dashboard-content');
   dashboardContent.innerHTML = `
@@ -1442,33 +1619,159 @@ function renderDashboard() {
   `;
 }
 
-// --- Admin Functions (Placeholders) ---
-// Placeholder for adding a new menu entry
+// --- Notes Functions ---
+function loadNotes() {
+    const notesContainer = document.getElementById('notesContainer');
+    notesContainer.innerHTML = '<p style="text-align: center; color: var(--text-color-light);">Loading notes...</p>'; // Show loading message
+
+    if (!user.id) {
+        notesContainer.innerHTML = '<p style="text-align: center; color: red;">Please log in to view notes.</p>';
+        return;
+    }
+
+    google.script.run
+        .withSuccessHandler(notes => {
+            notesContainer.innerHTML = ''; // Clear loading message
+
+            if (notes.length === 0) {
+                notesContainer.innerHTML = '<p style="text-align: center; color: var(--text-color-light);">No notes yet. Add one!</p>';
+                return;
+            }
+
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note-item';
+                noteElement.innerHTML = `
+                    <span>${note.text}</span>
+                    <div>
+                        <span class="timestamp">${new Date(note.timestamp).toLocaleString()}</span>
+                        <button class="delete-note-btn" onclick="deleteNote(${note.id})">Delete</button>
+                    </div>
+                `;
+                notesContainer.appendChild(noteElement);
+            });
+        })
+        .withFailureHandler(error => {
+            console.error("Error fetching notes:", error);
+            notesContainer.innerHTML = `<p style="text-align: center; color: red;">Error loading notes: ${error.message}</p>`;
+        })
+        .getNotes(user.id); // Call Apps Script to get notes for the current user
+}
+
+function addNote() {
+    const noteInput = document.getElementById('noteInput');
+    const noteText = noteInput.value.trim();
+
+    if (!noteText) {
+        alert("Please enter a note!"); // Using alert for simplicity, consider a custom modal
+        return;
+    }
+
+    if (!user.id) {
+        alert("You must be logged in to add notes.");
+        return;
+    }
+
+    google.script.run
+        .withSuccessHandler(res => {
+            if (res.success) {
+                noteInput.value = ''; // Clear input
+                loadNotes(); // Reload notes to show the new one
+            } else {
+                alert("Failed to add note: " + res.message); // Using alert for simplicity
+            }
+        })
+        .withFailureHandler(error => {
+            console.error("Error adding note:", error);
+            alert("Error adding note: " + error.message); // Using alert for simplicity
+        })
+        .addNote(noteText, user.id); // Call Apps Script to add note
+}
+
+function deleteNote(noteId) {
+    if (!confirm("Are you sure you want to delete this note?")) { // Using confirm for simplicity
+        return;
+    }
+
+    google.script.run
+        .withSuccessHandler(res => {
+            if (res.success) {
+                loadNotes(); // Reload notes after deletion
+            } else {
+                alert("Failed to delete note: " + res.message); // Using alert for simplicity
+            }
+        })
+        .withFailureHandler(error => {
+            console.error("Error deleting note:", error);
+            alert("Error deleting note: " + error.message); // Using alert for simplicity
+        })
+        .deleteNote(noteId); // Call Apps Script to delete note
+}
+
+
+// --- Admin Functions (Placeholders for `addEntry`, `loadAdminMenu`) ---
+// Note: These functions call placeholders in Apps Script currently.
+// You would need to implement `addMenuItem` and `getAdminMenuItems` in Code.gs
+// and define the structure for admin menu data if you want to use them.
+
 function addEntry() {
-  console.log("Add Entry functionality (from Code.gs) would be called here.");
+  console.log("Admin panel 'Add Entry' is a placeholder. Implement 'addMenuItem' in Apps Script to save data to your Menu sheet.");
   const role = document.getElementById('role').value;
   const menu = document.getElementById('menu').value;
   const submenu = document.getElementById('submenu').value;
   const link = document.getElementById('link').value;
   const icon = document.getElementById('icon').value;
-  const backer = document.getElementById('backer').value; // Get backer value
+  const backer = document.getElementById('backer').value; 
   
+  if (!role || !menu || !submenu || !link || !icon) {
+      alert("Please fill all fields for adding a menu item.");
+      return;
+  }
+
   // Example of calling your Apps Script function to save data:
-  // google.script.run.addMenuItem(role, menu, submenu, link, icon, backer);
-  // After adding, you would typically refresh the menu data and content:
-  // google.script.run.withSuccessHandler(data => {
-  //     allMenuItems = data.map(item => ({...})); // Re-map data
-  //     populateBackerFilter(allMenuItems);
-  //     updateAppContent();
-  // }).getMenuData();
+  // google.script.run
+  //   .withSuccessHandler(res => {
+  //       if (res.success) {
+  //           alert("Menu item added successfully!");
+  //           // Clear fields and refresh menu data
+  //           document.getElementById('role').value = '';
+  //           document.getElementById('menu').value = '';
+  //           document.getElementById('submenu').value = '';
+  //           document.getElementById('link').value = '';
+  //           document.getElementById('icon').value = '';
+  //           document.getElementById('backer').value = '';
+  //           loadPortal(user.roles); // Reload all menu data
+  //       } else {
+  //           alert("Failed to add menu item: " + res.message);
+  //       }
+  //   })
+  //   .withFailureHandler(error => {
+  //       console.error("Error adding menu item:", error);
+  //       alert("Error adding menu item: " + error.message);
+  //   })
+  //   .addMenuItem(role, menu, submenu, link, icon, backer);
+  alert("Admin panel 'Add Entry' is a placeholder. Implement 'addMenuItem' in Apps Script to save data to your Menu sheet.");
 }
 
-// Placeholder for loading the admin menu list
 function loadAdminMenu() {
-  console.log("Load Admin Menu functionality (from Code.gs) would be called here.");
+  console.log("Load Admin Menu functionality. Implement in Apps Script 'getAdminMenuItems'.");
   const adminMenuList = document.getElementById("admin-menu-list");
-  // This would typically fetch current admin menu items from Apps Script
-  adminMenuList.innerHTML = "<li>Example Admin Item <button class='delete-btn'>Delete</button></li>";
+  adminMenuList.innerHTML = "<li>Example Admin Item (Placeholder) <button class='delete-btn'>Delete</button></li>";
+  // Example of fetching admin menu items:
+  // google.script.run
+  //   .withSuccessHandler(items => {
+  //       adminMenuList.innerHTML = '';
+  //       items.forEach(item => {
+  //           const li = document.createElement('li');
+  //           li.innerHTML = `${item.submenu} - ${item.role} <button class='delete-btn' onclick="deleteMenuItem(${item.id})">Delete</button>`;
+  //           adminMenuList.appendChild(li);
+  //       });
+  //   })
+  //   .withFailureHandler(error => {
+  //       console.error("Error loading admin menu:", error);
+  //       adminMenuList.innerHTML = `<li style="color:red;">Error loading admin menu: ${error.message}</li>`;
+  //   })
+  //   .getAdminMenuItems(); // You'd need to implement this in Apps Script
 }
 </script>
 </body>
